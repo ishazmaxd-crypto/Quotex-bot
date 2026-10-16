@@ -1,1 +1,6 @@
-
+pandas
+pandas_ta
+yfinance
+requests
+flask
+gunicorn
