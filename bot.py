@@ -9,8 +9,7 @@ import threading
 # =============================================
 # ⚙️ YOUR SETTINGS
 # =============================================
-DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1560564603803533372/CYrOV2Bud-LyrsnDx5M5b5weOTSCM-YIiP_rik550SMwM-SCX48VBenLz5XofXya-7Oh
-"
+DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1560564603803533372/CYrOV2Bud-LyrsnDx5M5b5weOTSCM-YIiP_rik550SMwM-SCX48VBenLz5XofXya-7Oh"
 
 PAIRS = {
     "USD/JPY": "JPY=X",
