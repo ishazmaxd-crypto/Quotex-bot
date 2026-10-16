@@ -1,5 +1,4 @@
 pandas
-pandas_ta
 yfinance
 requests
 streamlit
