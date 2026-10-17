@@ -9,7 +9,11 @@ import threading
 # =============================================
 # ⚙️ YOUR SETTINGS
 # =============================================
-DISCORD_WEBHOOK = st.secrets["DISCORD_WEBHOOK"]
+# Safe Webhook Secret Handler
+try:
+    DISCORD_WEBHOOK = st.secrets["DISCORD_WEBHOOK"]
+except Exception:
+    DISCORD_WEBHOOK = ""
 
 PAIRS = {
     "USD/JPY": "JPY=X",
