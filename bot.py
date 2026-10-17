@@ -3,7 +3,10 @@ import pandas as pd
 import yfinance as yf
 import requests
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+
+# Define UTC+5 timezone offset
+PKT_TIMEZONE = timezone(timedelta(hours=5))
 import threading
 
 # =============================================
