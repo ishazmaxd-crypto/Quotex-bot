@@ -9,13 +9,13 @@ import threading
 # =============================================
 # ⚙️ YOUR SETTINGS
 # =============================================
-DISCORD_WEBHOOK = "PASTE_YOUR_DISCORD_WEBHOOK_URL_HERE"
+DISCORD_WEBHOOK = st.secrets["DISCORD_WEBHOOK"]
 
 PAIRS = {
     "USD/JPY": "JPY=X",
     "EUR/USD": "EURUSD=X",
     "GBP/USD": "GBPUSD=X",
-    "GBP/JPY": "GBPJPY=X",
+    "EUR/GBP": "EURGBP=X",
     "EUR/JPY": "EURJPY=X",
     "AUD/USD": "AUDUSD=X",
 }
