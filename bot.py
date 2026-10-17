@@ -126,7 +126,7 @@ def check_pair(name, ticker):
             reasons.append("EMA death cross")
 
     # Check signal threshold
-    ts = datetime.now().strftime("%H:%M:%S")
+    ts = datetime.now(PKT_TIMEZONE).strftime("%H:%M:%S")
     if call >= SIGNAL_THRESHOLD:
         reason_str = "\n".join([f"  • {r}" for r in reasons])
         msg = (
