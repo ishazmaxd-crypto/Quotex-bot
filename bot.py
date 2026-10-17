@@ -7,9 +7,17 @@ from datetime import datetime, timedelta, timezone
 import threading
 
 # =============================================
-# ⚙️ YOUR SETTINGS
+# ⚙️ TIMEZONE & SECRETS
 # =============================================
-DISCORD_WEBHOOK = st.secrets["DISCORD_WEBHOOK"]
+PKT_TIMEZONE = timezone(timedelta(hours=5))
+
+def get_discord_webhook():
+    try:
+        return st.secrets["DISCORD_WEBHOOK"].strip()
+    except Exception:
+        return ""
+
+DISCORD_WEBHOOK = get_discord_webhook()
 
 PAIRS = {
     "USD/JPY": "JPY=X",
@@ -51,9 +59,15 @@ def calc_bollinger(series, window=20, std_dev=2):
 # 🤖 BOT LOGIC
 # =============================================
 st.title("🤖 Quotex Cloud Bot is Running 24/7")
-st.success("App is active. Signals are sent to Discord.")
+
+if DISCORD_WEBHOOK:
+    st.success("App is active. Signals are sent to Discord.")
+else:
+    st.error("❌ DISCORD_WEBHOOK is missing in Streamlit Secrets!")
 
 def send_discord(message):
+    if not DISCORD_WEBHOOK:
+        return
     try:
         requests.post(DISCORD_WEBHOOK, json={"content": message}, timeout=10)
     except Exception:
@@ -171,7 +185,6 @@ def bot_loop():
             continue
 
         # 3. NIGHT TIME CHECK (1:00 AM to 6:00 AM local time)
-        # 1:00 AM is hour 1, 5:59 AM is hour 5. Hour 6 is 6:00 AM (morning restart).
         if 1 <= current_hour < 6:
             print(f"[{current_time_pkt.strftime('%H:%M:%S')}] 🌙 Night pause (1 AM - 6 AM). Skipping live signals...")
             continue
@@ -185,8 +198,7 @@ def bot_loop():
                 print(f"Error checking {name}: {e}")
                 continue
 
-        # Optional: Print a summary to the Streamlit logs
-        print(f"[{current_time}] Analysis completed for all pairs.")
+        print(f"[{current_time_pkt.strftime('%H:%M:%S')}] Analysis completed for all pairs.")
 
 # Start background thread
 if "bot_thread_started" not in st.session_state:
