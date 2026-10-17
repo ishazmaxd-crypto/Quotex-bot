@@ -160,16 +160,33 @@ def check_pair(name, ticker):
 
 def bot_loop():
     while True:
-        # Sync to candle boundary (:02s)
-        now = datetime.now()
-        wait_time = (60 - now.second) + 2
+        # 1. Sync to candle boundary (:02s) using UTC+5
+        now_dt = datetime.now(PKT_TIMEZONE)
+        wait_time = (60 - now_dt.second) + 2
         time.sleep(wait_time)
+        
+        current_time_pkt = datetime.now(PKT_TIMEZONE)
+        current_hour = current_time_pkt.hour  # 0 to 23
+        current_day = current_time_pkt.weekday()  # 0=Mon, 5=Sat, 6=Sun
 
+        # 2. WEEKEND CHECK (Saturday & Sunday)
+        if current_day >= 5:
+            print(f"[{current_time_pkt.strftime('%H:%M:%S')}] 🛑 Weekend detected. Market closed. Skipping...")
+            continue
+
+        # 3. NIGHT TIME CHECK (1:00 AM to 6:00 AM local time)
+        # 1:00 AM is hour 1, 5:59 AM is hour 5. Hour 6 is 6:00 AM (morning restart).
+        if 1 <= current_hour < 6:
+            print(f"[{current_time_pkt.strftime('%H:%M:%S')}] 🌙 Night pause (1 AM - 6 AM). Skipping live signals...")
+            continue
+
+        # 4. RUN MARKET ANALYSIS (Active Hours)
         for name, ticker in PAIRS.items():
             try:
                 check_pair(name, ticker)
                 time.sleep(1)
-            except Exception:
+            except Exception as e:
+                print(f"Error checking {name}: {e}")
                 continue
 
 # Start background thread
