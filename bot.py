@@ -157,22 +157,17 @@ def check_pair(name, ticker):
 def bot_loop():
     while True:
         # 1. Sync to the start of the next minute
-        now_dt = datetime.now()
+        now_dt = datetime.now(PKT_TIMEZONE)
         wait_time = (60 - now_dt.second) + 2
         time.sleep(wait_time)
         
-        # 2. WEEKEND CHECK
-        # weekday() returns 5 for Saturday and 6 for Sunday
-        current_day = datetime.now().weekday()
-        if current_day >= 5:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] Weekend detected. Market is closed. Skipping...")
-            continue # This jumps back to the top of the loop and waits for the next minute
+        # 2. WEEKEND CHECK (using local UTC+5 time)
+        current_time_pkt = datetime.now(PKT_TIMEZONE)
+        if current_time_pkt.weekday() >= 5:
+            print(f"[{current_time_pkt.strftime('%H:%M:%S')}] Weekend detected (UTC+5). Market closed. Skipping...")
+            continue
 
-        # 3. IF NOT WEEKEND, RUN ANALYSIS
-        current_time = datetime.now().strftime("%H:%M:%S")
-        signals_found = 0
-        signals_sent = 0
-
+        # 3. RUN MARKET ANALYSIS
         for name, ticker in PAIRS.items():
             try:
                 check_pair(name, ticker)
