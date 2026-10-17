@@ -156,17 +156,33 @@ def check_pair(name, ticker):
 
 def bot_loop():
     while True:
-        # Sync to candle boundary (:02s)
-        now = datetime.now()
-        wait_time = (60 - now.second) + 2
+        # 1. Sync to the start of the next minute
+        now_dt = datetime.now()
+        wait_time = (60 - now_dt.second) + 2
         time.sleep(wait_time)
+        
+        # 2. WEEKEND CHECK
+        # weekday() returns 5 for Saturday and 6 for Sunday
+        current_day = datetime.now().weekday()
+        if current_day >= 5:
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] Weekend detected. Market is closed. Skipping...")
+            continue # This jumps back to the top of the loop and waits for the next minute
+
+        # 3. IF NOT WEEKEND, RUN ANALYSIS
+        current_time = datetime.now().strftime("%H:%M:%S")
+        signals_found = 0
+        signals_sent = 0
 
         for name, ticker in PAIRS.items():
             try:
                 check_pair(name, ticker)
                 time.sleep(1)
-            except Exception:
+            except Exception as e:
+                print(f"Error checking {name}: {e}")
                 continue
+
+        # Optional: Print a summary to the Streamlit logs
+        print(f"[{current_time}] Analysis completed for all pairs.")
 
 # Start background thread
 if "bot_thread_started" not in st.session_state:
